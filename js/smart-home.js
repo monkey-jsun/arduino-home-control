@@ -111,6 +111,8 @@ function fetchData() {
         .done(function(a) {
 		console.log("Fetching data got return : ");
 		console.log(a);
+		var d=new Date(a['created_at']);
+		$('#data-last-update').html(d.toLocaleDateString() + " " + d.toLocaleTimeString());
 		$('#data-brightness').html(a[localStorage.brightness_field]);
 		$('#data-temperature').html(a[localStorage.temperature_field]);
 		if (a[localStorage.led_status_field] == "on") {
