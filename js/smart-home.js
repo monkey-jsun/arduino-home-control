@@ -23,6 +23,7 @@ $(document).on('pageshow', 'div:jqmData(role="page"), div:jqmData(role="dialog")
 */
 
 var timeout;
+var ledSwitchFlag=false; 
 function pageControlInit() {
 	console.log("pageControlInit() called");
 
@@ -82,6 +83,7 @@ function pageErrorInit() {
 }
 
 function controlLed(state) {
+	ledSwitchFlag=true;	// remember we send a command
 	url="http://api.thingspeak.com/talkbacks/" + localStorage.talkback_id + "/commands?key=" + localStorage.talkback_api_key + "&command_string=" + state;
 	console.log(url);
         var jqxhr=$.ajax({
@@ -120,7 +122,13 @@ function fetchData() {
 		} else {
 			$('#img-led-status').attr('src', 'light_off.png');
 		}
-		$('#toggle-led-control').val(a[localStorage.led_status_field]).slider('refresh');
+		if (ledSwitchFlag) {
+			// we sent a command earlier, ignore status once 
+			// for control state
+			ledSwitchFlag=false;
+		} else {
+			$('#toggle-led-control').val(a[localStorage.led_status_field]).slider('refresh');
+		}
         })
         .fail(function(jqxhr, status, msg) {
                 msg="Failed to connect to server: " + status + ", " + msg;
